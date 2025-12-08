@@ -1,10 +1,11 @@
-import { Award, Lightbulb, TrendingUp, Sparkles } from 'lucide-react';
+import { Award, Lightbulb, TrendingUp, Sparkles, Eye } from 'lucide-react';
 
 interface LandingPageProps {
   onSelectCategory: (category: 'emergence' | 'excellence' | 'creativite') => void;
+  onViewApplications: () => void;
 }
 
-export default function LandingPage({ onSelectCategory }: LandingPageProps) {
+export default function LandingPage({ onSelectCategory, onViewApplications }: LandingPageProps) {
   const categories = [
     {
       id: 'emergence' as const,
@@ -34,7 +35,18 @@ export default function LandingPage({ onSelectCategory }: LandingPageProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex justify-end mb-6">
+          <button
+            onClick={onViewApplications}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+          >
+            <Eye className="w-4 h-4" />
+            Voir les candidatures
+          </button>
+        </div>
+      </div>
+      <div className="container mx-auto px-4 py-4">
         <div className="text-center mb-16">
           <div className="flex items-center justify-center mb-6">
             <Lightbulb className="w-16 h-16 text-blue-600" />

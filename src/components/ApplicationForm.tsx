@@ -4,6 +4,7 @@ import { supabase, type Application } from '../lib/supabase';
 import Step1Organization from './steps/Step1Organization';
 import Step2Innovation from './steps/Step2Innovation';
 import Step3Objectives from './steps/Step3Objectives';
+import ReviewAndPrint from './ReviewAndPrint';
 import SuccessMessage from './SuccessMessage';
 
 interface ApplicationFormProps {
@@ -22,7 +23,7 @@ export default function ApplicationForm({ category, onBack }: ApplicationFormPro
   const [isSuccess, setIsSuccess] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
 
-  const totalSteps = 3;
+  const totalSteps = 4;
 
   const categoryTitles = {
     emergence: 'EMERGENCE',
@@ -34,6 +35,7 @@ export default function ApplicationForm({ category, onBack }: ApplicationFormPro
     { number: 1, title: 'Organisation' },
     { number: 2, title: 'Innovation' },
     { number: 3, title: 'Objectifs' },
+    { number: 4, title: 'Révision' },
   ];
 
   const updateFormData = (data: Partial<Application>) => {
@@ -86,7 +88,11 @@ export default function ApplicationForm({ category, onBack }: ApplicationFormPro
     }
   };
 
-  const handleSubmit = async () => {
+  const handleReviewEdit = () => {
+    setCurrentStep(3);
+  };
+
+  const handleReviewSubmit = async () => {
     if (!formData.denomination || !formData.email) {
       alert('Veuillez remplir tous les champs obligatoires');
       return;
@@ -203,55 +209,64 @@ export default function ApplicationForm({ category, onBack }: ApplicationFormPro
             {currentStep === 3 && (
               <Step3Objectives formData={formData} updateFormData={updateFormData} />
             )}
+            {currentStep === 4 && (
+              <ReviewAndPrint
+                formData={formData}
+                onEdit={handleReviewEdit}
+                onSubmit={handleReviewSubmit}
+                isSubmitting={isSubmitting}
+              />
+            )}
           </div>
 
-          <div className="px-8 py-6 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={saveDraft}
-                className="flex items-center gap-2 px-4 py-2 text-slate-700 hover:text-slate-900 hover:bg-slate-200 rounded-lg transition-colors"
-              >
-                <Save className="w-4 h-4" />
-                Sauvegarder le brouillon
-              </button>
-              {saveMessage && (
-                <span className="text-sm text-green-600 font-medium">
-                  {saveMessage}
-                </span>
-              )}
-            </div>
+          {currentStep < 4 && (
+            <div className="px-8 py-6 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={saveDraft}
+                  className="flex items-center gap-2 px-4 py-2 text-slate-700 hover:text-slate-900 hover:bg-slate-200 rounded-lg transition-colors"
+                >
+                  <Save className="w-4 h-4" />
+                  Sauvegarder le brouillon
+                </button>
+                {saveMessage && (
+                  <span className="text-sm text-green-600 font-medium">
+                    {saveMessage}
+                  </span>
+                )}
+              </div>
 
-            <div className="flex gap-3">
-              {currentStep > 1 && (
-                <button
-                  onClick={handlePrevious}
-                  className="flex items-center gap-2 px-6 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  Précédent
-                </button>
-              )}
+              <div className="flex gap-3">
+                {currentStep > 1 && (
+                  <button
+                    onClick={handlePrevious}
+                    className="flex items-center gap-2 px-6 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    Précédent
+                  </button>
+                )}
 
-              {currentStep < totalSteps ? (
-                <button
-                  onClick={handleNext}
-                  className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Suivant
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              ) : (
-                <button
-                  onClick={handleSubmit}
-                  disabled={isSubmitting}
-                  className="flex items-center gap-2 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isSubmitting ? 'Envoi en cours...' : 'Soumettre la candidature'}
-                  <Check className="w-4 h-4" />
-                </button>
-              )}
+                {currentStep < totalSteps - 1 ? (
+                  <button
+                    onClick={handleNext}
+                    className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    Suivant
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleNext}
+                    className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    Réviser et imprimer
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
