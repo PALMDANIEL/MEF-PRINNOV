@@ -1,4 +1,4 @@
-import { Award, Lightbulb, TrendingUp, Sparkles, Eye } from 'lucide-react';
+import { Award, TrendingUp, Sparkles, Eye } from 'lucide-react';
 
 interface LandingPageProps {
   onSelectCategory: (category: 'emergence' | 'excellence' | 'creativite') => void;
@@ -49,7 +49,11 @@ export default function LandingPage({ onSelectCategory, onViewApplications }: La
       <div className="container mx-auto px-4 py-4">
         <div className="text-center mb-16">
           <div className="flex items-center justify-center mb-6">
-            <Lightbulb className="w-16 h-16 text-blue-600" />
+            <img
+              src="/capture_d'écran_2025-12-05_à_15.27.21 copy.png"
+              alt="Prix de l'Innovation"
+              className="w-20 h-20"
+            />
           </div>
           <h1 className="text-5xl font-bold text-slate-800 mb-4">
             Prix de l'Innovation
