@@ -19,6 +19,10 @@ function App() {
     setCurrentPage('applications');
   };
 
+  const handleViewResults = () => {
+    setCurrentPage('applications');
+  };
+
   const handleBack = () => {
     setCurrentPage('landing');
     setSelectedCategory(null);
@@ -30,6 +34,7 @@ function App() {
         <LandingPage
           onSelectCategory={handleCategorySelect}
           onViewApplications={handleViewApplications}
+          onViewResults={handleViewResults}
         />
       )}
       {currentPage === 'form' && selectedCategory && (

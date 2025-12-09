@@ -3,9 +3,10 @@ import { Award, TrendingUp, Sparkles, Eye } from 'lucide-react';
 interface LandingPageProps {
   onSelectCategory: (category: 'emergence' | 'excellence' | 'creativite') => void;
   onViewApplications: () => void;
+  onViewResults: () => void;
 }
 
-export default function LandingPage({ onSelectCategory, onViewApplications }: LandingPageProps) {
+export default function LandingPage({ onSelectCategory, onViewApplications, onViewResults }: LandingPageProps) {
   const categories = [
     {
       id: 'emergence' as const,
@@ -35,15 +36,23 @@ export default function LandingPage({ onSelectCategory, onViewApplications }: La
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-end mb-6">
-          <button
-            onClick={onViewApplications}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-          >
-            <Eye className="w-4 h-4" />
-            Voir les candidatures
-          </button>
+      <div className="bg-white border-b border-slate-200 sticky top-0 z-40">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={onViewResults}
+              className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors font-medium"
+            >
+              Résultats
+            </button>
+            <button
+              onClick={onViewApplications}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            >
+              <Eye className="w-4 h-4" />
+              Voir les candidatures
+            </button>
+          </div>
         </div>
       </div>
       <div className="container mx-auto px-4 py-4">

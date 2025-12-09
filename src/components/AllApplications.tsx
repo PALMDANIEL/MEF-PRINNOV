@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Eye, Filter, Download } from 'lucide-react';
+import { ArrowLeft, Eye, Filter, Download, Search } from 'lucide-react';
 import { supabase, type Application } from '../lib/supabase';
 
 interface AllApplicationsProps {
@@ -10,6 +10,7 @@ export default function AllApplications({ onBack }: AllApplicationsProps) {
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'draft' | 'submitted'>('submitted');
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
 
   useEffect(() => {
@@ -66,6 +67,15 @@ export default function AllApplications({ onBack }: AllApplicationsProps) {
     });
   };
 
+  const filteredApplications = applications.filter((app) => {
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      app.denomination.toLowerCase().includes(searchLower) ||
+      app.email.toLowerCase().includes(searchLower) ||
+      app.sigle.toLowerCase().includes(searchLower)
+    );
+  });
+
   const exportToCSV = () => {
     const headers = [
       'ID',
@@ -120,21 +130,30 @@ export default function AllApplications({ onBack }: AllApplicationsProps) {
             </p>
           </div>
 
-          <div className="px-8 py-6 border-b border-slate-200">
+          <div className="px-8 py-6 border-b border-slate-200 space-y-4">
+            <div className="flex items-center gap-2 bg-slate-50 border border-slate-300 rounded-lg px-4 py-2 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent transition w-full">
+              <Search className="w-5 h-5 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Rechercher par organisation, email ou sigle..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="flex-1 bg-transparent outline-none text-slate-700 placeholder-slate-400"
+              />
+            </div>
+
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-4 w-full sm:w-auto">
-                <div className="flex items-center gap-2">
-                  <Filter className="w-5 h-5 text-slate-600" />
-                  <select
-                    value={filter}
-                    onChange={(e) => setFilter(e.target.value as 'all' | 'draft' | 'submitted')}
-                    className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                  >
-                    <option value="all">Toutes les candidatures</option>
-                    <option value="submitted">Soumises</option>
-                    <option value="draft">Brouillons</option>
-                  </select>
-                </div>
+              <div className="flex items-center gap-2">
+                <Filter className="w-5 h-5 text-slate-600" />
+                <select
+                  value={filter}
+                  onChange={(e) => setFilter(e.target.value as 'all' | 'draft' | 'submitted')}
+                  className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                >
+                  <option value="all">Toutes les candidatures</option>
+                  <option value="submitted">Soumises</option>
+                  <option value="draft">Brouillons</option>
+                </select>
               </div>
 
               <button
@@ -153,13 +172,15 @@ export default function AllApplications({ onBack }: AllApplicationsProps) {
               <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4" />
               <p className="text-slate-600">Chargement des candidatures...</p>
             </div>
-          ) : applications.length === 0 ? (
+          ) : filteredApplications.length === 0 ? (
             <div className="px-8 py-12 text-center">
               <Eye className="w-12 h-12 text-slate-400 mx-auto mb-4" />
               <p className="text-slate-600 mb-4">
-                {filter === 'all'
-                  ? 'Aucune candidature trouvée'
-                  : `Aucune candidature ${filter === 'draft' ? 'en brouillon' : 'soumise'} pour le moment`}
+                {searchTerm
+                  ? 'Aucune candidature trouvée pour votre recherche'
+                  : filter === 'all'
+                    ? 'Aucune candidature trouvée'
+                    : `Aucune candidature ${filter === 'draft' ? 'en brouillon' : 'soumise'} pour le moment`}
               </p>
             </div>
           ) : (
@@ -188,7 +209,7 @@ export default function AllApplications({ onBack }: AllApplicationsProps) {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
-                  {applications.map((app) => {
+                  {filteredApplications.map((app) => {
                     const statusConfig = getStatusBadge(app.status || 'draft');
                     return (
                       <tr key={app.id} className="hover:bg-slate-50 transition-colors">
